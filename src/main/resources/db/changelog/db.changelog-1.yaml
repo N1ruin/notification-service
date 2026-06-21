@@ -1,0 +1,40 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0
+      author: niruin
+      comment: init schema
+      changes:
+        - sql:
+            sql: CREATE SCHEMA notification_service
+
+  - changeSet:
+      id: 1
+      author: niruin
+      comment: create notification table
+      changes:
+        - createTable:
+            schemaName: notification_service
+            tableName: notification
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: payload
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: recipient
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: recipient_role
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
