@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1/notification-service")
 public class NotificationController {
@@ -45,8 +43,8 @@ public class NotificationController {
             notificationsPage = notificationService.findAllByRecipient(username, pageable);
         }
 
-        Page<NotificationDto> notificationDtos = notificationsPage.map(notificationMapper::toDto);
+        var notificationDtoPage = notificationsPage.map(notificationMapper::toDto);
 
-        return ResponseEntity.ok(notificationDtos);
+        return ResponseEntity.ok(notificationDtoPage);
     }
 }

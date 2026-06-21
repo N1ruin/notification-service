@@ -1,5 +1,7 @@
 package by.niruin.notification_service.kafka;
 
+import by.niruin.notification_service.mapper.EventMapper;
+import by.niruin.notification_service.model.event.MessageBrokerEvent;
 import by.niruin.notification_service.model.event.technical_library.equipment.EquipmentCreatedEvent;
 import by.niruin.notification_service.model.event.technical_library.equipment.EquipmentDeletedEvent;
 import by.niruin.notification_service.model.event.technical_library.equipment.EquipmentUpdatedEvent;
@@ -21,53 +23,63 @@ import org.springframework.stereotype.Component;
 public class TechnicalLibraryEventListener {
     private static final Logger logger = LogManager.getLogger(TechnicalLibraryEventListener.class);
     private final NotificationService notificationService;
+    private final EventMapper eventMapper;
 
-    public TechnicalLibraryEventListener(NotificationService notificationService) {
+    public TechnicalLibraryEventListener(NotificationService notificationService, EventMapper eventMapper) {
         this.notificationService = notificationService;
+        this.eventMapper = eventMapper;
     }
 
     @KafkaHandler
     public void handleEvent(EquipmentCreatedEvent event) {
-
+        processEvent(event);
     }
 
     @KafkaHandler
     public void handleEvent(EquipmentDeletedEvent event) {
-
+        processEvent(event);
     }
 
     @KafkaHandler
     public void handleEvent(EquipmentUpdatedEvent event) {
-
+        processEvent(event);
     }
 
     @KafkaHandler
     public void handleEvent(MaterialCreatedEvent event) {
-
+        processEvent(event);
     }
 
     @KafkaHandler
     public void handleEvent(MaterialDeletedEvent event) {
-
+        processEvent(event);
     }
 
     @KafkaHandler
     public void handleEvent(MaterialUpdatedEvent event) {
-
+        processEvent(event);
     }
 
     @KafkaHandler
     public void handleEvent(SafetyInstructionCreatedEvent event) {
-
+        processEvent(event);
     }
 
     @KafkaHandler
     public void handleEvent(SafetyInstructionDeletedEvent event) {
-
+        processEvent(event);
     }
 
     @KafkaHandler
     public void handleEvent(SafetyInstructionUpdatedEvent event) {
+        processEvent(event);
+    }
 
+    private void processEvent(MessageBrokerEvent event) {
+        logger.info("Received event: {}", event.getClass().getSimpleName());
+        var notification = eventMapper.map(event);
+        if (notification != null) {
+            notificationService.save(notification);
+        }
     }
 }

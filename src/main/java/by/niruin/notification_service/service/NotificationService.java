@@ -25,4 +25,9 @@ public class NotificationService {
     public Page<Notification> findAllByRecipient(String recipient, Pageable pageable) {
         return notificationRepository.findAllByRecipient(recipient, pageable);
     }
+
+    @Transactional
+    public void save(Notification notification) {
+        notificationRepository.save(notification);
+    }
 }

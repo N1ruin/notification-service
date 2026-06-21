@@ -15,7 +15,6 @@ import by.niruin.notification_service.model.event.technical_library.safety_instr
 import by.niruin.notification_service.model.event.technological_process.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
-import tools.jackson.databind.ObjectMapper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,84 +22,90 @@ import java.util.Map;
 @Component
 public class EventMapper {
     private final Map<String, Class<? extends MessageBrokerEvent>> eventClasses = new HashMap<>();
-    private final ObjectMapper objectMapper;
-
-    public EventMapper(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
 
     public Notification map(MessageBrokerEvent event) {
         var notification = new Notification();
 
-        if (event instanceof TechnologicalProcessCreatedEvent e) {
-            notification.setRecipientRole(RecipientRole.HEAD);
-            notification.setPayload("Создан техпроцесс c номером %s. Номер узла: %s. Наименование узла: %s"
-                    .formatted(e.fullNumber(), e.partNumber(), e.partName()));
-        } else if (event instanceof TechnologicalProcessUpdatedEvent e) {
-            notification.setRecipient(e.authorUsername());
-            notification.setRecipientRole(RecipientRole.ENGINEER);
-            notification.setPayload("Обновлен техпроцесс: ");
-        } else if (event instanceof TechnologicalProcessCancelledEvent e) {
-            notification.setRecipient(e.getDeveloperUsername());
-            notification.setRecipientRole(RecipientRole.DEVELOPER);
-            notification.setPayload("Отменен техпроцесс: " + e.getFullNumber());
-        } else if (event instanceof TechnologicalProcessSentToReviewEvent e) {
-            notification.setRecipient(e.getDeveloperUsername());
-            notification.setRecipientRole(RecipientRole.DEVELOPER);
-            notification.setPayload("Отправлен на проверку: " + e.getFullNumber());
-        } else if (event instanceof TechnologicalProcessApprovedEvent e) {
-            notification.setRecipient(e.getDeveloperUsername());
-            notification.setRecipientRole(RecipientRole.DEVELOPER);
-            notification.setPayload("Согласован техпроцесс: " + e.getFullNumber());
-        } else if (event instanceof TechnologicalProcessReturnedAfterReviewEvent e) {
-            notification.setRecipient(e.getDeveloperUsername());
-            notification.setRecipientRole(RecipientRole.DEVELOPER);
-            notification.setPayload("Возвращен на доработку: " + e.getFullNumber());
-        } else if (event instanceof EquipmentCreatedEvent e) {
-            notification.setRecipient("admin");
-            notification.setRecipientRole(RecipientRole.ADMIN);
-            notification.setPayload("Создано оборудование: " + e.getName());
-        } else if (event instanceof EquipmentUpdatedEvent e) {
-            notification.setRecipient("admin");
-            notification.setRecipientRole(RecipientRole.ADMIN);
-            notification.setPayload("Обновлено оборудование: " + e.getName());
-        } else if (event instanceof EquipmentDeletedEvent e) {
-            notification.setRecipient("admin");
-            notification.setRecipientRole(RecipientRole.ADMIN);
-            notification.setPayload("Удалено оборудование: " + e.getName());
-        } else if (event instanceof MaterialCreatedEvent e) {
-            notification.setRecipient("admin");
-            notification.setRecipientRole(RecipientRole.ADMIN);
-            notification.setPayload("Создан материал: " + e.getName());
-        } else if (event instanceof MaterialUpdatedEvent e) {
-            notification.setRecipient("admin");
-            notification.setRecipientRole(RecipientRole.ADMIN);
-            notification.setPayload("Обновлен материал: " + e.getName());
-        } else if (event instanceof MaterialDeletedEvent e) {
-            notification.setRecipient("admin");
-            notification.setRecipientRole(RecipientRole.ADMIN);
-            notification.setPayload("Удален материал: " + e.getName());
-        } else if (event instanceof SafetyInstructionCreatedEvent e) {
-            notification.setRecipient("admin");
-            notification.setRecipientRole(RecipientRole.ADMIN);
-            notification.setPayload("Создана инструкция: " + e.getName());
-        } else if (event instanceof SafetyInstructionUpdatedEvent e) {
-            notification.setRecipient("admin");
-            notification.setRecipientRole(RecipientRole.ADMIN);
-            notification.setPayload("Обновлена инструкция: " + e.getName());
-        } else if (event instanceof SafetyInstructionDeletedEvent e) {
-            notification.setRecipient("admin");
-            notification.setRecipientRole(RecipientRole.ADMIN);
-            notification.setPayload("Удалена инструкция: " + e.getName());
-        } else {
-            throw RuntimeException();
+        switch (event) {
+            case TechnologicalProcessCreatedEvent e -> {
+                notification.setRecipient(null);
+                notification.setRecipientRole(RecipientRole.HEAD);
+                notification.setPayload("Создан новый техпроцесс: %s (%s)".formatted(e.fullNumber(), e.partName()));
+            }
+            case TechnologicalProcessUpdatedEvent e -> {
+                notification.setRecipient(null);
+                notification.setRecipientRole(RecipientRole.HEAD);
+                notification.setPayload("Техпроцесс %s (%s) был обновлен".formatted(e.fullNumber(), e.partName()));
+            }
+            case TechnologicalProcessCancelledEvent e -> {
+                notification.setRecipient(null);
+                notification.setRecipientRole(RecipientRole.HEAD);
+                notification.setPayload("Техпроцесс %s (%s) был аннулирован".formatted(e.fullNumber(), e.partName()));
+            }
+            case TechnologicalProcessSentToReviewEvent e -> {
+                notification.setRecipient(e.reviewerUsername());
+                notification.setRecipientRole(RecipientRole.ENGINEER);
+                notification.setPayload("Техпроцесс %s (%s) отправлен вам на проверку".formatted(e.fullNumber(), e.partName()));
+            }
+            case TechnologicalProcessApprovedEvent e -> {
+                notification.setRecipient(e.authorUsername());
+                notification.setRecipientRole(RecipientRole.ENGINEER);
+                notification.setPayload("Техпроцесс %s (%s) был согласован проверяющим %s".formatted(e.fullNumber(), e.partName(), e.reviewerUsername()));
+            }
+            case TechnologicalProcessReturnedAfterReviewEvent e -> {
+                notification.setRecipient(e.authorUsername());
+                notification.setRecipientRole(RecipientRole.ENGINEER);
+                notification.setPayload("Техпроцесс %s (%s) возвращен на доработку проверяющим %s".formatted(e.fullNumber(), e.partName(), e.reviewerUsername()));
+            }
+            case EquipmentCreatedEvent e -> {
+                notification.setRecipient(null);
+                notification.setRecipientRole(RecipientRole.ENGINEER);
+                notification.setPayload("Создано новое оборудование: %s (индекс: %s, тип: %s)".formatted(e.name(), e.index(), e.type()));
+            }
+            case EquipmentUpdatedEvent e -> {
+                notification.setRecipient(null);
+                notification.setRecipientRole(RecipientRole.ENGINEER);
+                notification.setPayload("Обновлено оборудование: %s (индекс: %s, тип: %s)".formatted(e.name(), e.index(), e.type()));
+            }
+            case EquipmentDeletedEvent e -> {
+                notification.setRecipient(null);
+                notification.setRecipientRole(RecipientRole.ENGINEER);
+                notification.setPayload("Удалено оборудование: %s (индекс: %s)".formatted(e.name(), e.index()));
+            }
+            case MaterialCreatedEvent e -> {
+                notification.setRecipient(null);
+                notification.setRecipientRole(RecipientRole.ENGINEER);
+                notification.setPayload("Создан новый материал: %s (стандарт: %s, поставщик: %s)".formatted(e.name(), e.standard(), e.supplierCode()));
+            }
+            case MaterialUpdatedEvent e -> {
+                notification.setRecipient(null);
+                notification.setRecipientRole(RecipientRole.ENGINEER);
+                notification.setPayload("Обновлен материал: %s (стандарт: %s, поставщик: %s)".formatted(e.name(), e.standard(), e.supplierCode()));
+            }
+            case MaterialDeletedEvent e -> {
+                notification.setRecipient(null);
+                notification.setRecipientRole(RecipientRole.ENGINEER);
+                notification.setPayload("Удален материал: %s (стандарт: %s)".formatted(e.name(), e.standard()));
+            }
+            case SafetyInstructionCreatedEvent e -> {
+                notification.setRecipient(null);
+                notification.setRecipientRole(RecipientRole.ENGINEER);
+                notification.setPayload("Создана новая инструкция по безопасности: №%s".formatted(e.number()));
+            }
+            case SafetyInstructionUpdatedEvent e -> {
+                notification.setRecipient(null);
+                notification.setRecipientRole(RecipientRole.ENGINEER);
+                notification.setPayload("Обновлена инструкция по безопасности: №%s".formatted(e.number()));
+            }
+            case SafetyInstructionDeletedEvent e -> {
+                notification.setRecipient(null);
+                notification.setRecipientRole(RecipientRole.ENGINEER);
+                notification.setPayload("Удалена инструкция по безопасности: №%s".formatted(e.number()));
+            }
+            case null, default -> throw new RuntimeException("Event mapping error");
         }
 
         return notification;
-    }
-
-    public Class<? extends MessageBrokerEvent> getEventClass(String eventType) {
-        return eventClasses.get(eventType);
     }
 
     @PostConstruct
