@@ -1,4 +1,4 @@
-package by.niruin.notification_service.service;
+package by.niruin.notification_service.model.notification;
 
 import by.niruin.notification_service.domain.Notification;
 import by.niruin.notification_service.domain.RecipientRole;
@@ -16,18 +16,13 @@ public class NotificationService {
         this.notificationRepository = notificationRepository;
     }
 
-    @Transactional(readOnly = true)
-    public Page<Notification> findAllByRecipientRole(RecipientRole role, Pageable pageable) {
-        return notificationRepository.findAllByRecipientRole(role, pageable);
-    }
-
-    @Transactional(readOnly = true)
-    public Page<Notification> findAllByRecipient(String recipient, Pageable pageable) {
-        return notificationRepository.findAllByRecipient(recipient, pageable);
-    }
-
     @Transactional
-    public void save(Notification notification) {
-        notificationRepository.save(notification);
+    public Notification save(Notification notification) {
+       return notificationRepository.save(notification);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Notification> findAllForUser(String username, RecipientRole role, Pageable pageable) {
+        return notificationRepository.findAllForUser(username, role, pageable);
     }
 }

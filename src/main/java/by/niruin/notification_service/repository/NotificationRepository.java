@@ -4,12 +4,15 @@ import by.niruin.notification_service.domain.Notification;
 import by.niruin.notification_service.domain.RecipientRole;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-
-public interface NotificationRepository extends CrudRepository<Notification, Long> {
-    Page<Notification> findAllByRecipient(String recipient, Pageable pageable);
-
-    Page<Notification> findAllByRecipientRole(RecipientRole recipientRole, Pageable pageable);
+public interface NotificationRepository extends JpaRepository<Notification, Long> {
+    @Query("SELECT n FROM Notification n WHERE " +
+            "n.recipient = :username OR " +
+            "(n.recipient IS NULL AND n.recipientRole = :role)")
+    Page<Notification> findAllForUser(@Param("username") String username,
+            @Param("role") RecipientRole role,
+            Pageable pageable);
 }

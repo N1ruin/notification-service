@@ -1,6 +1,9 @@
 package by.niruin.notification_service.domain;
 
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "notification")
@@ -13,6 +16,13 @@ public class Notification {
     @Column(name = "recipient_role")
     @Enumerated(EnumType.STRING)
     private RecipientRole recipientRole;
+    @CreatedDate
+    @Column(name = "created_date")
+    private ZonedDateTime createdDate;
+
+    public ZonedDateTime getCreatedDate() {
+        return createdDate;
+    }
 
     public Long getId() {
         return id;

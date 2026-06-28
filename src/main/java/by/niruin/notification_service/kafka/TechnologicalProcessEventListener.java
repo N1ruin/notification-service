@@ -3,7 +3,7 @@ package by.niruin.notification_service.kafka;
 import by.niruin.notification_service.mapper.EventMapper;
 import by.niruin.notification_service.model.event.MessageBrokerEvent;
 import by.niruin.notification_service.model.event.technological_process.*;
-import by.niruin.notification_service.service.NotificationService;
+import by.niruin.notification_service.model.notification.NotificationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.kafka.annotation.KafkaHandler;

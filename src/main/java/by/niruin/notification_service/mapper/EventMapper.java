@@ -2,6 +2,7 @@ package by.niruin.notification_service.mapper;
 
 import by.niruin.notification_service.domain.Notification;
 import by.niruin.notification_service.domain.RecipientRole;
+import by.niruin.notification_service.exception.MappingException;
 import by.niruin.notification_service.model.event.MessageBrokerEvent;
 import by.niruin.notification_service.model.event.technical_library.equipment.EquipmentCreatedEvent;
 import by.niruin.notification_service.model.event.technical_library.equipment.EquipmentDeletedEvent;
@@ -102,7 +103,7 @@ public class EventMapper {
                 notification.setRecipientRole(RecipientRole.ENGINEER);
                 notification.setPayload("Удалена инструкция по безопасности: №%s".formatted(e.number()));
             }
-            case null, default -> throw new RuntimeException("Event mapping error");
+            case null, default -> throw new MappingException("Event mapping error");
         }
 
         return notification;
