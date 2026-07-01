@@ -8,13 +8,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import by.niruin.notification_service.model.error.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@RestControllerAdvice
 public class GlobalExceptionHandler {
-    private static Logger log = LogManager.getLogger(GlobalExceptionHandler.class);
+    private static final Logger log = LogManager.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<ErrorResponse> handleJwtException(JwtException exception) {
-        log.error("Jwt processing error: {}", exception.getMessage(), exception);
+        log.warn("Jwt processing error: {}", exception.getMessage(), exception);
 
         var errorResponse = new ErrorResponse("Jwt error",
                 "Jwt processing error",
@@ -25,7 +27,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<ErrorResponse> handleMappingException(MappingException exception) {
-        log.error("Event mapping exception: {}", exception.getMessage(), exception);
+        log.warn("Event mapping exception: {}", exception.getMessage(), exception);
 
         var errorResponse = new ErrorResponse("Event mapping error",
                 "Incorrect event data",
@@ -36,7 +38,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception exception) {
-        log.error("Unknown exception occurred: {}", exception.getMessage(), exception);
+        log.warn("Unknown exception occurred: {}", exception.getMessage(), exception);
 
         var errorResponse = new ErrorResponse("Internal Server Error",
                 "An unexpected error occurred. Please try again later.",
