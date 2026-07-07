@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(JwtException.class)
+    @ExceptionHandler(MappingException.class)
     public ResponseEntity<ErrorResponse> handleMappingException(MappingException exception) {
         log.warn("Event mapping exception: {}", exception.getMessage(), exception);
 
