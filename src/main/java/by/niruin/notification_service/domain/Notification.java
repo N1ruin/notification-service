@@ -6,7 +6,7 @@ import org.springframework.data.annotation.CreatedDate;
 import java.time.ZonedDateTime;
 
 @Entity
-@Table(name = "notification")
+@Table(name = "notification", schema = "notification_service")
 public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

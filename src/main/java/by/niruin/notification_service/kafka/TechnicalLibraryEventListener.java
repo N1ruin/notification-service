@@ -11,7 +11,7 @@ import by.niruin.notification_service.model.event.technical_library.material.Mat
 import by.niruin.notification_service.model.event.technical_library.safety_instruction.SafetyInstructionCreatedEvent;
 import by.niruin.notification_service.model.event.technical_library.safety_instruction.SafetyInstructionDeletedEvent;
 import by.niruin.notification_service.model.event.technical_library.safety_instruction.SafetyInstructionUpdatedEvent;
-import by.niruin.notification_service.model.notification.NotificationService;
+import by.niruin.notification_service.service.NotificationService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.kafka.annotation.KafkaHandler;

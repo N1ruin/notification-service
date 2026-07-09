@@ -2,15 +2,17 @@ package by.niruin.notification_service.integration;
 
 import by.niruin.notification_service.domain.Notification;
 import by.niruin.notification_service.domain.RecipientRole;
-import by.niruin.notification_service.model.notification.NotificationService;
+import by.niruin.notification_service.service.NotificationService;
 import by.niruin.notification_service.repository.NotificationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
@@ -49,7 +51,10 @@ class NotificationServiceIT extends BaseIntegrationTest {
         otherNotifications.forEach(notificationService::save);
 
         var requestBuilder = get("/api/v1/notification-service/notifications")
-                .with(jwt().jwt(jwt -> jwt.claim("sub", "elagun").claim("role", "ENGINEER")))
+                .with(jwt().jwt(jwt -> jwt
+                                .claim("sub", "elagun")
+                                .claim("realm_access", Map.of("roles", List.of("ENGINEER"))))
+                        .authorities(new SimpleGrantedAuthority("ROLE_ENGINEER")))
                 .contentType(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder)
@@ -73,7 +78,10 @@ class NotificationServiceIT extends BaseIntegrationTest {
         userNotifications.forEach(notificationService::save);
 
         var requestBuilder = get("/api/v1/notification-service/notifications")
-                .with(jwt().jwt(jwt -> jwt.claim("sub", "test").claim("role", "HEAD")))
+                .with(jwt().jwt(jwt -> jwt
+                                .claim("sub", "test")
+                                .claim("realm_access", Map.of("roles", List.of("HEAD"))))
+                        .authorities(new SimpleGrantedAuthority("ROLE_HEAD")))
                 .contentType(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder)
@@ -94,7 +102,10 @@ class NotificationServiceIT extends BaseIntegrationTest {
     @Test
     void getNotifications_shouldReturnEmptyPage() throws Exception {
         var requestBuilder = get("/api/v1/notification-service/notifications")
-                .with(jwt().jwt(jwt -> jwt.claim("sub", "unknown.user").claim("role", "ENGINEER")))
+                .with(jwt().jwt(jwt -> jwt
+                                .claim("sub", "unknown.user")
+                                .claim("realm_access", Map.of("roles", List.of("ENGINEER"))))
+                        .authorities(new SimpleGrantedAuthority("ROLE_ENGINEER")))
                 .contentType(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder)
@@ -115,7 +126,10 @@ class NotificationServiceIT extends BaseIntegrationTest {
         notifications.forEach(notificationService::save);
 
         var requestBuilder = get("/api/v1/notification-service/notifications")
-                .with(jwt().jwt(jwt -> jwt.claim("sub", "test").claim("role", "HEAD")))
+                .with(jwt().jwt(jwt -> jwt
+                                .claim("sub", "test")
+                                .claim("realm_access", Map.of("roles", List.of("HEAD"))))
+                        .authorities(new SimpleGrantedAuthority("ROLE_HEAD")))
                 .contentType(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder)

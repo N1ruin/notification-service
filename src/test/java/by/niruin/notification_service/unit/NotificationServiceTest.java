@@ -3,7 +3,7 @@ package by.niruin.notification_service.unit;
 import by.niruin.notification_service.domain.Notification;
 import by.niruin.notification_service.domain.RecipientRole;
 import by.niruin.notification_service.repository.NotificationRepository;
-import by.niruin.notification_service.model.notification.NotificationService;
+import by.niruin.notification_service.service.NotificationService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

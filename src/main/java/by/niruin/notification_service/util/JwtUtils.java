@@ -4,18 +4,27 @@ import by.niruin.notification_service.domain.RecipientRole;
 import by.niruin.notification_service.exception.JwtException;
 import org.springframework.security.oauth2.jwt.Jwt;
 
+import java.util.List;
+import java.util.Map;
+
 public class JwtUtils {
     public static RecipientRole extractRole(Jwt jwt) {
-        var roleClaim = jwt.getClaim("role");
-
-        if (roleClaim == null) {
-            throw new JwtException("Role claim is missing in JWT");
+        Map<String, Object> realmAccess = jwt.getClaim("realm_access");
+        if (realmAccess == null) {
+            throw new JwtException("realm_access claim is missing in JWT");
         }
 
+        var rolesObj = realmAccess.get("roles");
+        if (!(rolesObj instanceof List<?> roles) || roles.isEmpty()) {
+            throw new JwtException("No roles found in realm_access");
+        }
+
+        String role = roles.get(0).toString().toUpperCase();
+
         try {
-            return RecipientRole.valueOf(roleClaim.toString().toUpperCase());
+            return RecipientRole.valueOf(role);
         } catch (IllegalArgumentException e) {
-            throw new JwtException("Invalid role: " + roleClaim);
+            throw new JwtException("Invalid role: " + role);
         }
     }
 

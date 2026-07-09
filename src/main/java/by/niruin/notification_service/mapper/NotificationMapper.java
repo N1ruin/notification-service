@@ -1,7 +1,7 @@
 package by.niruin.notification_service.mapper;
 
 import by.niruin.notification_service.domain.Notification;
-import by.niruin.notification_service.model.NotificationDto;
+import by.niruin.notification_service.model.notification.NotificationDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

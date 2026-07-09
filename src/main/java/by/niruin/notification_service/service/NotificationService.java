@@ -1,4 +1,4 @@
-package by.niruin.notification_service.model.notification;
+package by.niruin.notification_service.service;
 
 import by.niruin.notification_service.domain.Notification;
 import by.niruin.notification_service.domain.RecipientRole;
