@@ -19,13 +19,14 @@ public class JwtUtils {
             throw new JwtException("No roles found in realm_access");
         }
 
-        String role = roles.get(0).toString().toUpperCase();
-
-        try {
-            return RecipientRole.valueOf(role);
-        } catch (IllegalArgumentException e) {
-            throw new JwtException("Invalid role: " + role);
+        for (Object r : roles) {
+            String role = r.toString().toUpperCase();
+            if (role.equals("ENGINEER") || role.equals("HEAD")) {
+                return RecipientRole.valueOf(role);
+            }
         }
+
+        throw new JwtException("User does not have required role (ENGINEER or HEAD)");
     }
 
     public static String extractUsername(Jwt jwt) {

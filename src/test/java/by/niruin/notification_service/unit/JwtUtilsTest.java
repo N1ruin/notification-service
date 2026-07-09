@@ -66,7 +66,7 @@ public class JwtUtilsTest {
 
         assertThatThrownBy(() -> JwtUtils.extractRole(jwt))
                 .isInstanceOf(JwtException.class)
-                .hasMessage("Invalid role: INVALID_ROLE");
+                .hasMessage("User does not have required role (ENGINEER or HEAD)");
     }
 
     @Test
